@@ -25,10 +25,10 @@
  * @description
  * A wrapper directive for select2 version 4
  */
-(function (angular) {
+(function(angular) {
     var TS_SELECT2_DEFAULTS = {
         // copy all classes on the original element upon initialization
-        containerCssClass: function (element) {
+        containerCssClass: function(element) {
             return element.attr('class');
         }
     };
@@ -45,12 +45,16 @@
         function tsSelect2DirectiveTransport(params, success, failure) {
             var timeout = $q.defer();
 
-            angular.extend({timeout: timeout}, params);
+            angular.extend({
+                timeout: timeout
+            }, params);
             $http(params).then(function(response) {
                 success(response.data);
             }, failure);
 
-            return {abort: timeout.resolve};
+            return {
+                abort: timeout.resolve
+            };
         }
 
         function tsSelect2DirectiveLink(scope, element, attrs, ngModelCtrl) {
@@ -123,34 +127,41 @@
             }
 
             function initSelect2() {
-                if (!!select2Options.ajax && !select2Options.ajax.transport) {
+                if ( !! select2Options.ajax && !select2Options.ajax.transport) {
                     select2Options.ajax.transport = tsSelect2DirectiveTransport;
                 }
 
-                if (!attrs.ngOptions && !!select2Options.ajax) {
+                attrs.textField = scope.$eval(attrs.textField);
+                attrs.textFn = scope.$eval(attrs.textFn);
+
+                if (!attrs.ngOptions && !! select2Options.ajax) {
+
                     initInitialSelectionOptions();
 
-                    ngModelCtrl.$parsers.push(function (id) {
+                    ngModelCtrl.$parsers.push(function(id) {
+                        var dat = element.select2('data');
+
                         if (angular.isArray(id)) {
                             var values = [];
                             var idx = 0;
-                            angular.forEach(id, function (singleId) {
+                            angular.forEach(id, function(singleId) {
                                 values.push(
                                     singleId && {
                                         id: singleId,
-                                        text: element.select2('data')[idx++][attrs.textField]
+                                        text: attrs.textFn ? attrs.textFn(dat[idx]) : dat[idx][attrs.textField || 'text']
                                     });
+                                idx++;
                             });
                             return values;
                         }
 
                         return id && {
-                                id: id,
-                                text: element.select2('data')[0][attrs.textField]
-                            };
+                            id: id,
+                            text: attrs.textFn ? attrs.textFn(dat[0]) : dat[0][attrs.textField || 'text']
+                        };
                     });
 
-                    ngModelCtrl.$parsers.push(function (id) {
+                    ngModelCtrl.$parsers.push(function(id) {
                         return id === null ? undefined : id;
                     });
                 }
@@ -172,12 +183,12 @@
             window.setTimeout(initSelect2);
 
             // destroy the select2 on scope destruction
-            scope.$on('$destroy', function () {
+            scope.$on('$destroy', function() {
                 getInput().off('.select2');
                 element.select2('destroy');
             });
         }
-        
+
         return {
             restrict: 'A',
             require: '^ngModel',
