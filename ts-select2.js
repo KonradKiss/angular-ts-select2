@@ -74,12 +74,21 @@
             }
 
             function initInitialSelectionOptions() {
-                var $modelValue = ngModelCtrl.$modelValue;
-                if (angular.isArray($modelValue)) {
-                    angular.forEach($modelValue, appendOption);
-                } else {
-                    appendOption($modelValue);
+                element.empty();
+
+                var modelValue = angular.copy(ngModelCtrl.$modelValue);
+
+                if (typeof modelValue === 'undefined' || modelValue === null) {
+                    return;
                 }
+
+                if (!angular.isArray(modelValue)) {
+                    modelValue = [modelValue];
+                } else if (modelValue.length === 0) {
+                    return;
+                }
+
+                angular.forEach(modelValue, appendOption);
             }
 
             /**
@@ -129,7 +138,7 @@
                                 values.push(
                                     singleId && {
                                         id: singleId,
-                                        text: element.select2('data')[idx++].text
+                                        text: element.select2('data')[idx++][attrs.textField]
                                     });
                             });
                             return values;
@@ -137,7 +146,7 @@
 
                         return id && {
                                 id: id,
-                                text: element.select2('data')[0].text
+                                text: element.select2('data')[0][attrs.textField]
                             };
                     });
 
