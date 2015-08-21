@@ -58,6 +58,11 @@
         }
 
         function tsSelect2DirectiveLink(scope, element, attrs, ngModelCtrl) {
+
+            if (typeof element.select2 === 'undefined') {
+                element = $(element);
+            }
+
             var select2Options = {};
             angular.extend(select2Options, TS_SELECT2_DEFAULTS);
             angular.extend(select2Options, scope.$eval(attrs.tsSelect2));
