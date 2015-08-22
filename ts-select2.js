@@ -174,6 +174,10 @@
                 var selection = element.data().select2.$selection;
                 propagateCssStateChanges(selection);
 
+                element.on('select2:select', function(e) {
+                    ngModelCtrl.$setViewValue(element.val(), e);
+                });
+
                 getInput().on('blur.select2', function() {
                     element.trigger('blur');
                 });
