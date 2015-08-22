@@ -26,6 +26,8 @@
  * A wrapper directive for select2 version 4
  */
 (function(angular) {
+    'use strict';
+
     var TS_SELECT2_DEFAULTS = {
         // copy all classes on the original element upon initialization
         containerCssClass: function(element) {
@@ -58,14 +60,11 @@
         }
 
         function tsSelect2DirectiveLink(scope, element, attrs, ngModelCtrl) {
-
-            if (typeof element.select2 === 'undefined') {
-                element = $(element);
-            }
+            element = $(element[0]);
 
             var select2Options = {};
-            angular.extend(select2Options, TS_SELECT2_DEFAULTS);
-            angular.extend(select2Options, scope.$eval(attrs.tsSelect2));
+            angular.merge(select2Options, TS_SELECT2_DEFAULTS);
+            angular.merge(select2Options, scope.$eval(attrs.tsSelect2));
 
             element.hide();
 
@@ -110,7 +109,7 @@
                     ngModelCtrl[property] = function() {
                         original();
                         $animate.setClass(element, addClass, removeClass);
-                    }
+                    };
                 }
 
                 handleChange('$setDirty', DIRTY_CLASS, PRISTINE_CLASS);
@@ -199,7 +198,7 @@
             require: '^ngModel',
             priority: 1,
             link: tsSelect2DirectiveLink
-        }
+        };
     }
 
     angular.module('tsSelect2', [])
