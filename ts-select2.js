@@ -175,7 +175,11 @@
                 propagateCssStateChanges(selection);
 
                 element.on('select2:select', function(e) {
-                    ngModelCtrl.$setViewValue(element.val().replace(/^string\:/g, ''), e);
+                    var val = element.val();
+                    if (typeof val === 'string') {
+                        val = val.replace(/^string\:/g, '');
+                    }
+                    ngModelCtrl.$setViewValue(val, e);
                 });
 
                 getInput().on('blur.select2', function() {
