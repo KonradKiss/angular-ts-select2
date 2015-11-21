@@ -185,6 +185,25 @@
                 getInput().on('blur.select2', function() {
                     element.trigger('blur');
                 });
+
+                // Watch for the model change
+                scope.$watch(function() {
+                    return ngModelCtrl.$modelValue;
+                }, function(newValue, oldValue) {
+                    if (angular.equals(newValue, oldValue)) {
+                        // Simply skip the update
+                        return;
+                    }
+
+                    if (typeof newValue === 'undefined') {
+                        // Clear select value if the model has been removed
+                        newValue = null;
+                    } else if (typeof newValue === 'string') {
+                        newValue = 'string:' + newValue;
+                    }
+                    // Update the selection
+                    element.val(newValue).trigger('change');
+                });
             }
 
             // defer initialization to execute after select and ngOptions initialization
