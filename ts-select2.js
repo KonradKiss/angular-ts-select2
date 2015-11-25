@@ -130,6 +130,20 @@
                 return element.data().select2.dropdown.$search || element.data().select2.selection.$search;
             }
 
+            /**
+             * Update the model based on the selected value
+             *
+             * @param event
+             */
+            function updateModel(event) {
+
+                var val = element.val();
+                if (typeof val === 'string') {
+                    val = val.replace(/^string\:/g, '');
+                }
+                ngModelCtrl.$setViewValue(val, event);
+            }
+
             function initSelect2() {
                 if ( !! select2Options.ajax && !select2Options.ajax.transport) {
                     select2Options.ajax.transport = tsSelect2DirectiveTransport;
@@ -174,16 +188,24 @@
                 var selection = element.data().select2.$selection;
                 propagateCssStateChanges(selection);
 
-                element.on('select2:select', function(e) {
-                    var val = element.val();
-                    if (typeof val === 'string') {
-                        val = val.replace(/^string\:/g, '');
-                    }
-                    ngModelCtrl.$setViewValue(val, e);
-                });
+                // Event handlers
+                element.on('select2:select', updateModel);
+                element.on('select2:unselect', updateModel);
 
                 getInput().on('blur.select2', function() {
                     element.trigger('blur');
+                });
+
+                // Watch for the model change
+                scope.$watch(function() {
+                    // This can be also element.val();
+                    return ngModelCtrl.$modelValue;
+                }, function(newValue, oldValue) {
+                    if (angular.equals(newValue, oldValue)) {
+                        // Simply skip the update
+                        return;
+                    }
+                    element.trigger('change');
                 });
             }
 
