@@ -205,7 +205,10 @@
                         // Simply skip the update
                         return;
                     }
-                    element.trigger('change');
+                    // Wait for the options to be initialized
+                    window.setTimeout(function() {
+                        element.trigger('change');
+                    });
                 });
             }
 
