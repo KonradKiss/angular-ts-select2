@@ -20,6 +20,6 @@
   "dependencies": {
     "select2": "~4.0.0",
     "angular": "1.2 - 1.4",
-    "jQuery": "~2.1.4"
+    "jquery": "~2.1.4"
   }
 }
