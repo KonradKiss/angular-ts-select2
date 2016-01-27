@@ -205,7 +205,9 @@
                         // Simply skip the update
                         return;
                     }
-                    element.trigger('change');
+
+                    // Turned off triggering - it causes a '$digest already in progress' error (Tamás)
+                    // element.trigger('change');
                 });
             }
 
