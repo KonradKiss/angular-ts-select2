@@ -35,7 +35,7 @@
         }
     };
 
-    function tsSelect2Directive($http, $q, $animate) {
+    function tsSelect2Directive($http, $q, $animate, $timeout) {
         var PRISTINE_CLASS = 'ng-pristine';
         var DIRTY_CLASS = 'ng-dirty';
         var TOUCHED_CLASS = 'ng-touched';
@@ -208,8 +208,9 @@
                         return;
                     }
 
-                    // Turned off triggering - it causes a '$digest already in progress' error (Tamás)
-                    // element.trigger('change');
+                    $timeout(function() {
+                        element.trigger('change');
+                    });
                 });
             }
 
@@ -237,6 +238,6 @@
 
     angular.module('tsSelect2', [])
         .constant('TS_SELECT2_DEFAULTS', TS_SELECT2_DEFAULTS)
-        .directive('tsSelect2', ['$http', '$q', '$animate', tsSelect2Directive]);
+        .directive('tsSelect2', ['$http', '$q', '$animate', '$timeout', tsSelect2Directive]);
 
 })(angular);
