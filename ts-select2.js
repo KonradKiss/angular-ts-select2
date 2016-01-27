@@ -127,7 +127,9 @@
              * @returns {*} the dom element used by select2 for allowing user input
              */
             function getInput() {
-                return element.data().select2.dropdown.$search || element.data().select2.selection.$search;
+                if (typeof element.data().select2 !== 'undefined') {
+                    return element.data().select2.dropdown.$search || element.data().select2.selection.$search;
+                }
             }
 
             /**
