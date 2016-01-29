@@ -129,6 +129,8 @@
             function getInput() {
                 if (typeof element.data().select2 !== 'undefined') {
                     return element.data().select2.dropdown.$search || element.data().select2.selection.$search;
+                } else {
+                    return null;
                 }
             }
 
@@ -194,9 +196,11 @@
                 element.on('select2:select', updateModel);
                 element.on('select2:unselect', updateModel);
 
-                getInput().on('blur.select2', function() {
-                    element.trigger('blur');
-                });
+                if (getInput() !== null) {
+                    getInput().on('blur.select2', function() {
+                        element.trigger('blur');
+                    });
+                }
 
                 // Watch for the model change
                 scope.$watch(function() {
@@ -223,8 +227,10 @@
 
             // destroy the select2 on scope destruction
             scope.$on('$destroy', function() {
-                getInput().off('.select2');
-                element.select2('destroy');
+                if (getInput() !== null) {
+                    getInput().off('.select2');
+                    element.select2('destroy');
+                }
             });
         }
 
